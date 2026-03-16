@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小龙学学乐 🐉</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .dragon {
+            font-size: 80px;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        h1 {
+            color: #e94560;
+            font-size: 28px;
+            margin: 10px 0;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e94560;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .question-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .question-type {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .option {
+            background: white;
+            border: 3px solid #e94560;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .option:hover {
+            background: #e94560;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .option.correct {
+            background: #4caf50 !important;
+            border-color: #4caf50 !important;
+            color: white;
+        }
+        
+        .option.wrong {
+            background: #f44336 !important;
+            border-color: #f44336 !important;
+            color: white;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            transition: width 0.3s;
+        }
+        
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-size: 18px;
+            display: none;
+        }
+        
+        .message.success {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .message.error {
+            display: block;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .streak {
+            text-align: center;
+            padding: 10px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        
+        .level-up {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .level-up.show {
+            display: flex;
+        }
+        
+        .level-up-content {
+            background: white;
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            animation: pop 0.5s;
+        }
+        
+        @keyframes pop {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+        
+        .level-up h2 {
+            color: #e94560;
+            font-size: 36px;
+        }
+        
+        .btn {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            background: #ff6b6b;
+        }
+        
+        .start-screen, .game-screen {
+            display: none;
+        }
+        
+        .start-screen.active, .game-screen.active {
+            display: block;
+        }
+        
+        .tip {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 开始界面 -->
+        <div class="start-screen active" id="startScreen">
+            <div class="header">
+                <div class="dragon">🐉</div>
+                <h1>小龙学学乐</h1>
+                <p style="color: #666;">适合7岁小朋友的益智游戏</p>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="totalDays">0</div>
+                    <div class="stat-label">连续天数</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="totalScore">0</div>
+                    <div class="stat-label">总金币</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="totalLevel">1</div>
+                    <div class="stat-label">当前等级</div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="startGame()">开始答题 🏁</button>
+            <p class="tip">每天10道题，连续学习棒棒的！</p>
+        </div>
+        
+        <!-- 游戏界面 -->
+        <div class="game-screen" id="gameScreen">
+            <div class="header">
+                <div class="dragon">🐉</div>
+                <h1>小龙学学乐</h1>
+            </div>
+            
+            <div class="streak" id="streakText">
+                🔥 今日已答对 0 题，继续加油！
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress" id="progress" style="width: 0%"></div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="currentScore">0</div>
+                    <div class="stat-label">本题金币</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="currentLevel">1</div>
+                    <div class="stat-label">等级</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="questionNum">1/10</div>
+                    <div class="stat-label">进度</div>
+                </div>
+            </div>
+            
+            <div class="question-box">
+                <div class="question-type" id="questionType">数学题</div>
+                <div class="question-text" id="questionText">1 + 1 = ?</div>
+            </div>
+            
+            <div class="options" id="options">
+                <div class="option" onclick="selectAnswer(0)">2</div>
+                <div class="option" onclick="selectAnswer(1)">3</div>
+                <div class="option" onclick="selectAnswer(2)">4</div>
+                <div class="option" onclick="selectAnswer(3)">5</div>
+            </div>
+            
+            <div class="message" id="message"></div>
+        </div>
+        
+        <!-- 升级弹窗 -->
+        <div class="level-up" id="levelUp">
+            <div class="level-up-content">
+                <div style="font-size: 60px;">🎉</div>
+                <h2>升级啦！</h2>
+                <p id="levelUpText">恭喜升到 2 级！</p>
+                <button class="btn" onclick="closeLevelUp()">继续游戏</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 游戏数据
+        let gameData = {
+            totalDays: 0,
+            lastPlayDate: null,
+            totalScore: 0,
+            currentLevel: 1,
+            exp: 0,
+            todayCorrect: 0,
+            todayTotal: 0,
+            currentQuestion: 0,
+            questions: []
+        };
+        
+        // 题目库
+        const mathQuestions = [
+            { q: '5 + 3 = ?', a: 8, options: [6, 7, 8, 9] },
+            { q: '7 + 4 = ?', a: 11, options: [9, 10, 11, 12] },
+            { q: '9 - 3 = ?', a: 6, options: [4, 5, 6, 7] },
+            { q: '8 + 6 = ?', a: 14, options: [12, 13, 14, 15] },
+            { q: '15 - 7 = ?', a: 8, options: [6, 7, 8, 9] },
+            { q: '4 + 8 = ?', a: 12, options: [10, 11, 12, 13] },
+            { q: '11 - 5 = ?', a: 6, options: [4, 5, 6, 7] },
+            { q: '6 + 9 = ?', a: 15, options: [13, 14, 15, 16] },
+            { q: '13 - 6 = ?', a: 7, options: [5, 6, 7, 8] },
+            { q: '7 + 7 = ?', a: 14, options: [12, 13, 14, 15] },
+            { q: '10 - 4 = ?', a: 6, options: [4, 5, 6, 7] },
+            { q: '5 + 9 = ?', a: 14, options: [12, 13, 14, 15] },
+            { q: '12 - 8 = ?', a: 4, options: [2, 3, 4, 5] },
+            { q: '6 + 6 = ?', a: 12, options: [10, 11, 12, 13] },
+            { q: '14 - 9 = ?', a: 5, options: [3, 4, 5, 6] },
+        ];
+        
+        const charQuestions = [
+            { q: '哪个是"大"字？', a: '大', options: ['太', '大', '天', '木'] },
+            { q: '哪个是"小"字？', a: '小', options: ['少', '小', '木', '水'] },
+            { q: '哪个是"山"字？', a: '山', options: ['山', '石', '工', '土'] },
+            { q: '哪个是"水"字？', a: '水', options: ['水', '木', '火', '土'] },
+            { q: '哪个是"火"字？', a: '火', options: ['大', '小', '火', '木'] },
+            { q: '哪个是"人"字？', a: '人', options: ['入', '人', '八', '大'] },
+            { q: '哪个是"口"字？', a: '口', options: ['日', '口', '月', '田'] },
+            { q: '哪个是"日"字？', a: '日', options: ['日', '口', '月', '目'] },
+            { q: '哪个是"木"字？', a: '木', options: ['本', '木', '林', '森'] },
+            { q: '哪个是"田"字？', a: '田', options: ['甲', '田', '电', '由'] },
+        ];
+        
+        const commonSense = [
+            { q: '太阳从哪里升起？', a: '东方', options: ['东方', '西方', '南方', '北方'] },
+            { q: '一年有几个季节？', a: '4个', options: ['3个', '4个', '5个', '6个'] },
+            { q: '以下哪个是水果？', a: '苹果', options: ['苹果', '萝卜', '白菜', '土豆'] },
+            { q: '小鸟用什么飞？', a: '翅膀', options: ['翅膀', '腿', '尾巴', '嘴巴'] },
+            { q: '我们用什么看书？', a: '眼睛', options: ['眼睛', '耳朵', '鼻子', '嘴巴'] },
+            { q: '一天有24个小时，对吗？', a: '对', options: ['对', '错', '', ''] },
+            { q: '哪个动物会下蛋？', a: '母鸡', options: ['母鸡', '狗', '猫', '兔子'] },
+            { q: '水在什么温度会结冰？', a: '0度', options: ['0度', '100度', '50度', '零下10度'] },
+            { q: '我们的国旗是什么颜色？', a: '红色', options: ['红色', '蓝色', '黄色', '绿色'] },
+            { q: '耳朵用来做什么？', a: '听声音', options: ['听声音', '闻气味', '看东西', '吃东西'] },
+        ];
+        
+        // 加载数据
+        function loadData() {
+            const saved = localStorage.getItem('dragonGame');
+            if (saved) {
+                gameData = JSON.parse(saved);
+                
+                // 检查是否新的一天
+                const today = new Date().toDateString();
+                if (gameData.lastPlayDate !== today) {
+                    // 新的一天
+                    if (gameData.lastPlayDate) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        if (gameData.lastPlayDate === yesterday.toDateString()) {
+                            gameData.totalDays++;
+                        } else {
+                            gameData.totalDays = 1;
+                        }
+                    } else {
+                        gameData.totalDays = 1;
+                    }
+                    gameData.todayCorrect = 0;
+                    gameData.todayTotal = 0;
+                    gameData.lastPlayDate = today;
+                    saveData();
+                }
+            } else {
+                gameData.totalDays = 1;
+                gameData.lastPlayDate = new Date().toDateString();
+                saveData();
+            }
+            
+            updateStats();
+        }
+        
+        // 保存数据
+        function saveData() {
+            localStorage.setItem('dragonGame', JSON.stringify(gameData));
+        }
+        
+        // 更新显示
+        function updateStats() {
+            document.getElementById('totalDays').textContent = gameData.totalDays;
+            document.getElementById('totalScore').textContent = gameData.totalScore;
+            document.getElementById('totalLevel').textContent = gameData.currentLevel;
+        }
+        
+        // 生成题目
+        function generateQuestions() {
+            gameData.questions = [];
+            const types = ['math', 'math', 'char', 'common']; // 数学题多一点
+            
+            for (let i = 0; i < 10; i++) {
+                const type = types[Math.floor(Math.random() * types.length)];
+                let q;
+                
+                if (type === 'math') {
+                    q = mathQuestions[Math.floor(Math.random() * mathQuestions.length)];
+                } else if (type === 'char') {
+                    q = charQuestions[Math.floor(Math.random() * charQuestions.length)];
+                } else {
+                    q = commonSense[Math.floor(Math.random() * commonSense.length)];
+                }
+                
+                // 复制题目避免重复
+                gameData.questions.push({
+                    ...q,
+                    type: type === 'math' ? '数学题' : (type === 'char' ? '识字题' : '常识题')
+                });
+            }
+        }
+        
+        // 开始游戏
+        function startGame() {
+            document.getElementById('startScreen').classList.remove('active');
+            document.getElementById('gameScreen').classList.add('active');
+            
+            gameData.currentQuestion = 0;
+            gameData.todayCorrect = 0;
+            generateQuestions();
+            showQuestion();
+        }
+        
+        // 显示题目
+        function showQuestion() {
+            const q = gameData.questions[gameData.currentQuestion];
+            
+            document.getElementById('questionType').textContent = q.type;
+            document.getElementById('questionText').textContent = q.q;
+            document.getElementById('questionNum').textContent = (gameData.currentQuestion + 1) + '/10';
+            document.getElementById('progress').style.width = (gameData.currentQuestion * 10) + '%';
+            document.getElementById('currentScore').textContent = gameData.currentLevel * 10;
+            document.getElementById('currentLevel').textContent = gameData.currentLevel;
+            document.getElementById('streakText').textContent = '🔥 今日已答对 ' + gameData.todayCorrect + ' 题，继续加油！';
+            
+            const optionsEl = document.getElementById('options');
+            optionsEl.innerHTML = '';
+            
+            q.options.forEach((opt, index) => {
+                if (opt) {
+                    const div = document.createElement('div');
+                    div.className = 'option';
+                    div.textContent = opt;
+                    div.onclick = () => selectAnswer(index);
+                    optionsEl.appendChild(div);
+                }
+            });
+            
+            document.getElementById('message').className = 'message';
+        }
+        
+        // 选择答案
+        function selectAnswer(index) {
+            const q = gameData.questions[gameData.currentQuestion];
+            const options = document.querySelectorAll('.option');
+            const isCorrect = q.options[index] === q.a;
+            
+            if (isCorrect) {
+                options[index].classList.add('correct');
+                gameData.todayCorrect++;
+                gameData.totalScore += gameData.currentLevel * 10;
+                gameData.exp += gameData.currentLevel * 10;
+                
+                // 检查升级
+                const oldLevel = gameData.currentLevel;
+                gameData.currentLevel = Math.floor(gameData.exp / 100) + 1;
+                
+                document.getElementById('message').textContent = '🎉 答对啦！+' + (gameData.currentLevel * 10) + '金币';
+                document.getElementById('message').className = 'message success';
+                
+                if (gameData.currentLevel > oldLevel) {
+                    setTimeout(() => showLevelUp(oldLevel, gameData.currentLevel), 1000);
+                }
+            } else {
+                options[index].classList.add('wrong');
+                // 显示正确答案
+                q.options.forEach((opt, i) => {
+                    if (opt === q.a) {
+                        options[i].classList.add('correct');
+                    }
+                });
+                document.getElementById('message').textContent = '😢 答错了，正确答案是 ' + q.a;
+                document.getElementById('message').className = 'message error';
+            }
+            
+            // 禁用所有选项
+            options.forEach(opt => opt.style.pointerEvents = 'none');
+            
+            gameData.todayTotal++;
+            saveData();
+            updateStats();
+            
+            // 下一题
+            setTimeout(() => {
+                gameData.currentQuestion++;
+                if (gameData.currentQuestion >= 10) {
+                    endGame();
+                } else {
+                    showQuestion();
+                }
+            }, 1500);
+        }
+        
+        // 升级显示
+        function showLevelUp(oldLevel, newLevel) {
+            document.getElementById('levelUpText').textContent = '恭喜从 ' + oldLevel + ' 级升到 ' + newLevel + ' 级！';
+            document.getElementById('levelUp').classList.add('show');
+        }
+        
+        // 关闭升级弹窗
+        function closeLevelUp() {
+            document.getElementById('levelUp').classList.remove('show');
+        }
+        
+        // 结束游戏
+        function endGame() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('startScreen').classList.add('active');
+            
+            const accuracy = gameData.todayCorrect / 10 * 100;
+            let msg = '';
+            if (accuracy === 100) {
+                msg = '🎉 太厉害了！全对！';
+            } else if (accuracy >= 70) {
+                msg = '👏 很棒！继续加油！';
+            } else {
+                msg = '💪 明天继续努力！';
+            }
+            
+            alert('今日答题完成！\n答对: ' + gameData.todayCorrect + '/10\n' + msg);
+            loadData();
+        }
+        
+        // 初始化
+        loadData();
+    </script>
+</body>
+</html>
